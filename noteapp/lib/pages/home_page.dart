@@ -76,6 +76,24 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {},
         child: const Icon(Icons.add),
       ),
+      body: notes.isEmpty
+          ? Center(
+              child: Text(
+                "Belum ada cacatan",
+                style: theme.textTheme.bodyMedium,
+              ),
+            )
+          : GridView.builder(
+              padding: EdgeInsets.all(12),
+              itemCount: notes.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+              ),
+              itemBuilder: (context, index) {
+                return NoteCard(note: notes[index]);
+              },
+            ),
     );
   }
 }
