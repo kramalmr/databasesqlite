@@ -72,6 +72,51 @@ class _NotePageState extends State<NotePage> {
           ),
         ],
       ),
+
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: titleController,
+              style: Theme.of(context).textTheme.titleLarge,
+              decoration: InputDecoration(
+                hintText: "Judul",
+                border: InputBorder.none,
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            Expanded(
+              child: TextField(
+                controller: contentController,
+                style: Theme.of(context).textTheme.bodyMedium,
+                maxLines: null,
+                expands: true,
+                decoration: InputDecoration(
+                  hintText: "Tulis catatan...",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            Divider(
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+            ),
+
+            const SizedBox(height: 8),
+
+            TextField(
+              controller: authorController,
+              style: Theme.of(context).textTheme.bodySmall,
+              decoration: InputDecoration(
+                hintText: "Ditulis oleh...",
+                border: InputBorder.none,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
