@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:noteapp/widgets/confirm_dialog.dart';
+import 'package:noteapp/widgets/note_card.dart';
 import 'note_page.dart';
 import '../models/note_model.dart';
 import '../theme/app_theme.dart';
@@ -30,33 +32,33 @@ class _HomePageState extends State<HomePage> {
   }
 
   // delete
-  // void deleteNote(int index) async {
-  //   bool confirm = await showConfirmDialog(context);
-  //   if (confirm) {
-  //     setState(() {
-  //       notes.removeAt(index);
-  //     });
-  //   }
-  // }
+  void deleteNote(int index) async {
+    bool confirm = await showConfirmDialog(context);
+    if (confirm) {
+      setState(() {
+        notes.removeAt(index);
+      });
+    }
+  }
 
-  // // navigation'
+  // navigation'
 
-  // void goToNotePage({Note? note, int? index}) async {
-  //   final result = await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (_) => NotePage(note: note)),
-  //   );
+  void goToNotePage({Note? note, int? index}) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => NotePage(note: note)),
+    );
 
-  //   // handle result
+    // handle result
 
-  //   if (result == "delete" %% index != null) {
-  //     deleteNote(index);
-  //   } else if (result != null && index != null) {
-  //     updateNote(index, result);
-  //   } else if (result != null) {
-  //     addNote(result);
-  //   }
-  // }
+    if (result == "delete" && index != null) {
+      deleteNote(index);
+    } else if (result != null && index != null) {
+      updateNote(index, result);
+    } else if (result != null) {
+      addNote(result);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +93,11 @@ class _HomePageState extends State<HomePage> {
                 crossAxisSpacing: 12,
               ),
               itemBuilder: (context, index) {
-                return NoteCard(note: notes[index]);
+                return NoteCard(
+                  note: notes[index],
+                  onEdit: () => goToNotePage(note: notes[index], index: index),
+                  onDelete: () => deleteNote(index),
+                );
               },
             ),
     );
