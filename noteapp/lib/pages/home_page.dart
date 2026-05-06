@@ -75,7 +75,9 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: theme.scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          goToNotePage();
+        },
         child: const Icon(Icons.add),
       ),
       body: notes.isEmpty
