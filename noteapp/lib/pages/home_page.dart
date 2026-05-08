@@ -4,6 +4,7 @@ import 'package:noteapp/widgets/note_card.dart';
 import 'note_page.dart';
 import '../models/note_model.dart';
 import '../theme/app_theme.dart';
+import '../services/database_helper.dart';
 
 class HomePage extends StatefulWidget {
   final VoidCallback onToggleTheme;
@@ -16,6 +17,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Note> notes = [];
   // crud
+  // load
+  Future<void> loadNotes() async {
+    final data = await DatabaseHelper.instance.getAllNotes();
+    setState(() {
+      notes = data;
+    });
+  }
 
   // add
   void addNote(Note note) {
@@ -51,13 +59,22 @@ class _HomePageState extends State<HomePage> {
 
     // handle result
 
-    if (result == "delete" && index != null) {
-      deleteNote(index);
-    } else if (result != null && index != null) {
-      updateNote(index, result);
-    } else if (result != null) {
-      addNote(result);
+    if (result == "delete" && note?.id != null) {
+      await DatabaseHelper.instance.deleteNote(note!.id!);
+      await loadNotes();
+    } else if (result is Note && note != null) {
+      await DatabaseHelper.instance.updateNote(result);
+      await loadNotes();
+    } else if (result is Note) {
+      await DatabaseHelper.instance.insertNote(result);
+      await loadNotes();
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadNotes();
   }
 
   @override

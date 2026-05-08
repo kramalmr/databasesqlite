@@ -55,7 +55,7 @@ class _NotePageState extends State<NotePage> {
       content: contentController.text,
       author: authorController.text,
       createdAt: widget.note?.createdAt ?? now,
-      updatedAt: now
+      updatedAt: now,
     );
     Navigator.pop(context, note);
   }
@@ -78,69 +78,88 @@ class _NotePageState extends State<NotePage> {
         ],
       ),
     );
-    if (confirm) {
+
+    if (!mounted) return;
+
+    if (confirm == true) {
       // ignore: use_build_context_synchronously
       Navigator.pop(context, "delete");
     }
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: saveNote,
-          icon: const Icon(Icons.arrow_back),
-        ),
-        actions: [
-          IconButton(
-            onPressed: deleteNote,
-            icon: const Icon(Icons.delete_outline_outlined),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop || _isSaving) return;
+
+        _isSaving = true;
+
+        final navigator = Navigator.of(context);
+
+        saveNote();
+
+        navigator.pop();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: saveNote,
+            icon: const Icon(Icons.arrow_back),
           ),
-        ],
-      ),
-
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: titleController,
-              style: Theme.of(context).textTheme.titleLarge,
-              decoration: InputDecoration(
-                hintText: "Judul",
-                border: InputBorder.none,
-              ),
+          actions: [
+            IconButton(
+              onPressed: deleteNote,
+              icon: const Icon(Icons.delete_outline_outlined),
             ),
-            const SizedBox(height: 10),
+          ],
+        ),
 
-            Expanded(
-              child: TextField(
-                controller: contentController,
-                style: Theme.of(context).textTheme.bodyMedium,
-                maxLines: null,
-                expands: true,
+        body: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: titleController,
+                autofocus: true,
+                style: Theme.of(context).textTheme.titleLarge,
                 decoration: InputDecoration(
-                  hintText: "Tulis catatan...",
+                  hintText: "Judul",
                   border: InputBorder.none,
                 ),
               ),
-            ),
-            Divider(
-              color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
-            ),
+              const SizedBox(height: 10),
 
-            const SizedBox(height: 8),
-
-            TextField(
-              controller: authorController,
-              style: Theme.of(context).textTheme.bodySmall,
-              decoration: InputDecoration(
-                hintText: "Ditulis oleh...",
-                border: InputBorder.none,
+              Expanded(
+                child: TextField(
+                  controller: contentController,
+                  keyboardType: TextInputType.multiline,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: null,
+                  expands: true,
+                  decoration: InputDecoration(
+                    hintText: "Tulis catatan...",
+                    border: InputBorder.none,
+                  ),
+                ),
               ),
-            ),
-          ],
+              Divider(
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+              ),
+
+              const SizedBox(height: 8),
+
+              TextField(
+                controller: authorController,
+                style: Theme.of(context).textTheme.bodySmall,
+                decoration: InputDecoration(
+                  hintText: "Ditulis oleh...",
+                  border: InputBorder.none,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
