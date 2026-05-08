@@ -15,6 +15,8 @@ class _NotePageState extends State<NotePage> {
   final contentController = TextEditingController();
   final authorController = TextEditingController();
 
+  bool _isSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -25,11 +27,35 @@ class _NotePageState extends State<NotePage> {
     }
   }
 
+  @override
+  void dispose() {
+    titleController.dispose();
+    contentController.dispose();
+    authorController.dispose();
+    super.dispose();
+  }
+
   void saveNote() {
+    if (_isSaving) return;
+    _isSaving = true;
+
+    if (!mounted) return;
+
+    if (titleController.text.trim().isEmpty &&
+        contentController.text.trim().isEmpty) {
+      Navigator.pop(context);
+      return;
+    }
+
+    final now = DateTime.now().toIso8601String();
+
     final note = Note(
+      id: widget.note?.id,
       title: titleController.text,
       content: contentController.text,
       author: authorController.text,
+      createdAt: widget.note?.createdAt ?? now,
+      updatedAt: now
     );
     Navigator.pop(context, note);
   }
